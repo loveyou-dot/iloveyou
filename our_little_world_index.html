@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fff1f5">
+  <title>Our Little World ❤️</title>
+  <style>
+    :root{--pink:#e87991;--deep:#a83f60;--bg:#fff7f9;--ink:#49323b}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:linear-gradient(145deg,#fff7f9,#ffe8ef);color:var(--ink);min-height:100vh}
+    .wrap{width:min(760px,92%);margin:32px auto}
+    .card{background:#ffffffdf;border:1px solid #f6cbd7;border-radius:25px;padding:24px;box-shadow:0 14px 40px #a83f6012;margin:18px 0}
+    h1,h2,p{text-align:center}
+    h1{color:var(--deep);font-size:clamp(28px,6vw,42px);margin:8px 0}
+    h2{color:var(--deep);margin-top:0}
+    .muted{color:#8a6975;text-align:center;line-height:1.8}
+    .heart{text-align:center;font-size:42px}
+    .choices{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    button,.choice{border:0;border-radius:15px;padding:14px 16px;background:var(--pink);color:white;font-weight:700;font-size:16px;cursor:pointer}
+    .choice{background:white;color:var(--deep);border:1px solid #f0b9ca}
+    button:hover,.choice:hover{filter:brightness(.97);transform:translateY(-1px)}
+    label{display:block;margin:14px 0 6px;font-weight:650}
+    input{width:100%;padding:14px;border:1px solid #e9bdca;border-radius:12px;font:inherit;background:#fff}
+    .primary{width:100%;margin-top:18px}
+    .hidden{display:none}
+    .names{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;font-weight:750;font-size:clamp(19px,4vw,27px);color:var(--deep);margin:20px 0}
+    .gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .photo{border:1px solid #f1c6d2;border-radius:17px;overflow:hidden;background:#fff}
+    .photo img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover}
+    .photo p{font-size:14px;padding:0 8px}
+    .note{font-size:13px;line-height:1.7;background:#fff2f5;border-radius:12px;padding:12px;color:#805365}
+    .small{font-size:12px}
+    @media(max-width:480px){.choices{grid-template-columns:1fr}.card{padding:18px}.wrap{margin:16px auto}}
+  </style>
+</head>
+<body>
+<main class="wrap">
+  <section class="card" id="welcome">
+    <div class="heart">💌</div>
+    <h1>ئەم لینکەت لە کوێوە بۆ هاتووە؟</h1>
+    <p class="muted">تکایە یەکێک هەڵبژێرە</p>
+    <div class="choices">
+      <button class="choice" onclick="choosePlatform('Snapchat')">👻 Snapchat</button>
+      <button class="choice" onclick="choosePlatform('TikTok')">🎵 TikTok</button>
+      <button class="choice" onclick="choosePlatform('Instagram')">📸 Instagram</button>
+    </div>
+  </section>
+
+  <section class="card hidden" id="siteLogin">
+    <div class="heart">🔐</div>
+    <h2>بەخێربێیت ❤️</h2>
+    <p class="muted">بۆ چوونەژوورەوەی وێبسایتەکە، هەژماری تایبەتی ئەم وێبسایتە بەکاربهێنە.</p>
+    <form onsubmit="siteLoginSubmit(event)">
+      <label for="siteUser">Username</label>
+      <input id="siteUser" autocomplete="username" placeholder="Username" required>
+      <label for="sitePass">Password</label>
+      <input id="sitePass" type="password" autocomplete="current-password" placeholder="Password" required>
+      <button class="primary" type="submit">Log in</button>
+    </form>
+    <p class="note">تێبینی: ئەم نموونەیە هێشتا بە سیستەمی پاراستنی ڕاستەقینە نەبەستراوەتەوە. پاسۆردی هیچ هەژماری Snapchat، Instagram یان TikTok لێرە مەنووسە.</p>
+  </section>
+
+  <section class="card hidden" id="sender">
+    <div class="heart">💗</div>
+    <h2>ئەم لینکە لەلایەن کێوە بۆت هاتووە؟</h2>
+    <p class="muted">یوسەرنەیمی نێرەری لینکەکە بنووسە</p>
+    <form onsubmit="senderSubmit(event)">
+      <label for="senderUser">Username</label>
+      <input id="senderUser" placeholder="Username" required>
+      <button class="primary" type="submit">بەردەوامبوون ❤️</button>
+    </form>
+  </section>
+
+  <section class="card hidden" id="private">
+    <div class="heart">❤️</div>
+    <h1>Our Little World</h1>
+    <div class="names"><span id="nameOne">یوسەری تۆ</span><span>♡</span><span id="nameTwo">یوسەری خۆشەویستەکەت</span></div>
+    <p class="muted">شوێنێک تەنها بۆ من و تۆ...</p>
+    <h2>Our Memories 📸</h2>
+    <p class="muted">وێنەکانتان لێرە زیاد بکەن</p>
+    <label for="photos">هەڵبژاردنی وێنە</label>
+    <input id="photos" type="file" accept="image/*" multiple onchange="showPhotos(event)">
+    <div class="gallery" id="gallery" style="margin-top:16px"></div>
+    <p class="note">وێنەکان لەم پێشبینینەدا تەنها لەسەر ئەم ئامێرە پیشان دەدرێن. بۆ ئەوەی هەردووکتان لە هەر ئامێرێک وێنەکان ببینن، پێویستە هەڵگرتنی ئۆنلاین و دەسەڵاتی چوونەژوورەوە زیاد بکرێت.</p>
+  </section>
+
+  <p class="muted small">دروستکراوە بە خۆشەویستی ❤️</p>
+</main>
+<script>
+  let selectedPlatform = "";
+  function show(id){ document.querySelectorAll("main section").forEach(s=>s.classList.add("hidden")); document.getElementById(id).classList.remove("hidden"); }
+  function choosePlatform(name){ selectedPlatform=name; show("siteLogin"); }
+  function siteLoginSubmit(e){
+    e.preventDefault();
+    alert("ئەم فۆڕمە تەنها دیزاینی پێشبینینە. پێویستە authentication ـی پارێزراوی backend زیاد بکرێت.");
+  }
+  function senderSubmit(e){
+    e.preventDefault();
+    const user=document.getElementById("senderUser").value.trim();
+    if(!user) return;
+    show("private");
+  }
+  function showPhotos(e){
+    const gallery=document.getElementById("gallery");
+    [...e.target.files].forEach(file=>{
+      if(!file.type.startsWith("image/")) return;
+      const url=URL.createObjectURL(file);
+      const item=document.createElement("div"); item.className="photo";
+      const img=document.createElement("img"); img.src=url; img.alt="وێنەی بیرەوەری";
+      const caption=document.createElement("p"); caption.textContent="بیرەوەرییەکی جوان ❤️";
+      item.append(img,caption); gallery.append(item);
+    });
+  }
+</script>
+</body>
+</html>
