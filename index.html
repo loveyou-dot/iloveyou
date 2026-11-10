@@ -3,40 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ئەوینی و ئەمینی</title>
+    <title>وێبسایتی خۆشەویستی</title>
     <style>
         body {
             font-family: Tahoma, sans-serif;
-            background: linear-gradient(135deg, #fce4ec, #f8bbd0);
+            background: #ffffff;
             margin: 0;
             padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            color: #4a154b;
+            color: #333333;
         }
         .container {
-            background: white;
+            background: #ffffff;
             padding: 30px;
             border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
             width: 100%;
             max-width: 450px;
             text-align: center;
+            border: 1px solid #f0f0f0;
         }
         .hidden { display: none; }
         input, select, textarea {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             margin: 10px 0;
             border: 1px solid #ddd;
             border-radius: 8px;
             box-sizing: border-box;
             text-align: right;
+            font-family: Tahoma, sans-serif;
         }
         button {
-            background: #d81b60;
+            background: #e91e63;
             color: white;
             border: none;
             padding: 12px;
@@ -46,25 +48,32 @@
             font-size: 16px;
             font-weight: bold;
             margin-top: 10px;
+            transition: 0.3s;
         }
-        button:hover { background: #c2185b; }
+        button:hover { background: #d81b60; }
+        .secondary-btn {
+            background: #607d8b;
+            margin-top: 8px;
+        }
+        .secondary-btn:hover { background: #546e7a; }
         .countdown-box {
             display: flex;
             justify-content: space-around;
-            background: #fdf2f4;
+            background: #fafafa;
             padding: 15px;
             border-radius: 10px;
             margin: 15px 0;
+            border: 1px solid #eee;
         }
         .time-item {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: bold;
-            color: #ad1457;
+            color: #666;
         }
         .time-item span {
             display: block;
-            font-size: 20px;
-            color: #880e4f;
+            font-size: 18px;
+            color: #e91e63;
         }
         .question-group {
             text-align: right;
@@ -74,14 +83,17 @@
             font-weight: bold;
             display: block;
             margin-bottom: 5px;
+            font-size: 14px;
+            color: #444;
         }
     </style>
 </head>
 <body>
 
+    <!-- ١. پەڕەی چوونەژوورەوە -->
     <div class="container" id="login-section">
         <h2>چوونەژوورەوە</h2>
-        <label>ئەم لینکەت لە کوێ بۆت هات؟</label>
+        <label style="text-align: right; display: block; margin-top: 10px;">ئەم لینکەت لە کوێ بۆت هات؟</label>
         <select id="source">
             <option value="Snapchat">سناپچات</option>
             <option value="TikTok">تیکتۆک</option>
@@ -90,20 +102,22 @@
 
         <input type="text" id="username" placeholder="ناوی خۆت">
         <input type="password" id="password" placeholder="پاسۆرد">
-        <input type="text" id="sender" placeholder="لەلایەن کێوە بۆت هات؟ (یوزەرنەیم)">
+        <input type="text" id="sender" placeholder="ناوی خۆشەویستەکەت (لەلایەن کێوە بۆت هات؟)">
 
-        <button onclick="goToDateSection()">ردەوامبوون</button>
+        <button onclick="goToDateSection()">بەردەوامبوون</button>
     </div>
 
+    <!-- ٢. پەڕەی تۆمارکردنی بەروار -->
     <div class="container hidden" id="date-section">
         <h2>بەرواری یەکترناسین</h2>
-        <p>تکایە بەرواری یەکترناسینەکەتان تۆمار بکە بۆ هەژمارکردنی کات:</p>
+        <p style="font-size: 14px; color: #666;">تکایە بەرواری یەکترناسینەکەتان تۆمار بکە:</p>
         <input type="datetime-local" id="relation-date">
-        <button onclick="startApp()">دەستپێکردن</button>
+        <button onclick="saveDateAndGoHome()">تۆمارکردن و چووە ناو وێبسایت</button>
     </div>
 
-    <div class="container hidden" id="main-section">
-        <h2>❤ ئەوینی و ئەمینی ❤</h2>
+    <!-- ٣. داشبۆردی سەرەکی -->
+    <div class="container hidden" id="main-dashboard">
+        <h2 id="couple-names-title">🤍 خۆشەویستی 🤍</h2>
         
         <div class="countdown-box">
             <div class="time-item"><span id="days">0</span>ڕۆژ</div>
@@ -112,41 +126,50 @@
             <div class="time-item"><span id="seconds">0</span>چرکە</div>
         </div>
 
-        <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+        <button onclick="showSection('questions-section')">پرسیارە تایبەتەکان</button>
+        <button onclick="showSection('wishes-section')" class="secondary-btn">بەشی داواکارییەکان</button>
+    </div>
 
+    <!-- ٤. بەشی پرسیارەکان -->
+    <div class="container hidden" id="questions-section">
         <h3>پرسیارە تایبەتەکان</h3>
         
         <div class="question-group">
-            <label>1. ناوی ئەو کەسەی دەنگی بەلایەوە خۆشە (شاعیر یان هونەرمەند)؟</label>
+            <label>١. ناوی ئەو کەسەی دەنگی بەلایەوە خۆشە (شاعیر یان هونەرمەند)؟</label>
             <input type="text" placeholder="وەڵامەکەت بنووسە...">
         </div>
 
         <div class="question-group">
-            <label>2. ئەو خواردنەی حەزی لێیە؟</label>
+            <label>٢. ئەو خواردنەی حەزی لێیە؟</label>
             <input type="text" placeholder="وەڵامەکەت بنووسە...">
         </div>
 
         <div class="question-group">
-            <label>3. کەی خۆشتویست لە ناخی دڵتەوە؟</label>
+            <label>٣. بەچی دڵی ئەشکێت؟</label>
             <input type="text" placeholder="وەڵامەکەت بنووسە...">
         </div>
 
         <div class="question-group">
-            <label>4. کەی زۆر ڕقت لێبوو؟</label>
+            <label>٤. بە چی ئاشت ئەبێتەوە؟</label>
             <input type="text" placeholder="وەڵامەکەت بنووسە...">
         </div>
 
+        <button onclick="alert('وەڵامەکانت پاشەکەوت کران!')">ناردنی وەڵامەکان</button>
+        <button onclick="showSection('main-dashboard')" class="secondary-btn">گەڕانەوە بۆ دواوە</button>
+    </div>
+
+    <!-- ٥. بەشی داواکارییەکان -->
+    <div class="container hidden" id="wishes-section">
+        <h3>بەشی داواکارییەکان</h3>
+        <p style="font-size: 13px; color: #666; text-align: right;">هەرچییەکت دەوێت لێرە بینووسە بۆ خۆشەویستەکەت:</p>
+        
         <div class="question-group">
-            <label>5. بەچی دڵی ئەشکێت؟</label>
-            <input type="text" placeholder="وەڵامەکەت بنووسە...">
+            <label>داواکارییەکەت بنووسە:</label>
+            <textarea rows="4" placeholder="نامە یان داواکارییەکەت لێرە بنووسە..."></textarea>
         </div>
 
-        <div class="question-group">
-            <label>6. بە چی ئاشت ئەبێتەوە؟</label>
-            <input type="text" placeholder="وەڵامەکەت بنووسە...">
-        </div>
-
-        <button onclick="alert('وەڵامەکانت بە سەرکەوتوویی پاشەکەوت کران!')">ناردنی وەڵامەکان</button>
+        <button onclick="alert('داواکارییەکەت بە سەرکەوتوویی نێردرا!')">ناردنی داواکاری</button>
+        <button onclick="showSection('main-dashboard')" class="secondary-btn">گەڕانەوە بۆ دواوە</button>
     </div>
 
     <script>
@@ -155,15 +178,21 @@
         function goToDateSection() {
             const user = document.getElementById('username').value;
             const pass = document.getElementById('password').value;
-            if(!user || !pass) {
-                alert('تکایە ناو و پاسۆرد بنووسە');
+            const sender = document.getElementById('sender').value;
+            
+            if(!user || !pass || !sender) {
+                alert('تکایە هەموو خانەکان پڕبکەرەوە');
                 return;
             }
+
+            // دانانی ناوی هەردوو کەسەکە لەونیشانەی سەرەکیدا
+            document.getElementById('couple-names-title').innerText = `🤍 ${user} & ${sender} 🤍`;
+
             document.getElementById('login-section').classList.add('hidden');
             document.getElementById('date-section').classList.remove('hidden');
         }
 
-        function startApp() {
+        function saveDateAndGoHome() {
             const dateInput = document.getElementById('relation-date').value;
             if(!dateInput) {
                 alert('تکایە بەروار دیاری بکە');
@@ -171,12 +200,21 @@
             }
             startDate = new Date(dateInput).getTime();
             document.getElementById('date-section').classList.add('hidden');
-            document.getElementById('main-section').classList.remove('hidden');
+            document.getElementById('main-dashboard').classList.remove('hidden');
 
             setInterval(updateCountdown, 1000);
         }
 
+        function showSection(sectionId) {
+            document.getElementById('main-dashboard').classList.add('hidden');
+            document.getElementById('questions-section').classList.add('hidden');
+            document.getElementById('wishes-section').classList.add('hidden');
+
+            document.getElementById(sectionId).classList.remove('hidden');
+        }
+
         function updateCountdown() {
+            if (!startDate) return;
             const now = new Date().getTime();
             const distance = now - startDate;
 
