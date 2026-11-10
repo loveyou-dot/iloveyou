@@ -197,7 +197,7 @@
             <input type="text" placeholder="وەڵامەکەت بنووسە...">
         </div>
 
-        <button onclick="alert('وەڵامەکانت پاشەکەوت کران!')">ناردنی وەڵامەکان</button>
+        <button onclick="submitQuestions()">ناردنی وەڵامەکان</button>
         <button onclick="showSection('main-dashboard')" class="secondary-btn">گەڕانەوە بۆ دواوە</button>
     </div>
 
@@ -211,7 +211,7 @@
             <textarea rows="4" placeholder="نامە یان داواکارییەکەت لێرە بنووسە..."></textarea>
         </div>
 
-        <button onclick="alert('داواکارییەکەت بە سەرکەوتوویی نێردرا!')">ناردنی داواکاری</button>
+        <button onclick="submitWish()">ناردنی داواکاری</button>
         <button onclick="showSection('main-dashboard')" class="secondary-btn">گەڕانەوە بۆ دواوە</button>
     </div>
 
@@ -253,6 +253,14 @@
             document.getElementById('wishes-section').classList.add('hidden');
 
             document.getElementById(sectionId).classList.remove('hidden');
+        }
+
+        function submitQuestions() {
+            alert('وەڵامەکانت پاشەکەوت کران!\n\n📸 تکایە سکرین شۆت (Screen Shot) بکە و بینێرە بۆ خۆشەویستەکەت!');
+        }
+
+        function submitWish() {
+            alert('داواکارییەکەت نێردرا!\n\n📸 تکایە سکرین شۆت (Screen Shot) بکە و بینێرە بۆ خۆشەویستەکەت!');
         }
 
         function updateCountdown() {
