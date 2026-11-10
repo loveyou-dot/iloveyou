@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: Tahoma, sans-serif;
-            background: #ffffff;
+            background: linear-gradient(135deg, #fce4ec, #f8bbd0, #fce4ec);
             margin: 0;
             padding: 0;
             display: flex;
@@ -15,16 +15,42 @@
             align-items: center;
             min-height: 100vh;
             color: #333333;
+            overflow: hidden;
+            position: relative;
         }
+
+        /* دڵی جووڵاو کە بەرەو سەرەوە دەچن */
+        .heart-bg {
+            position: absolute;
+            bottom: -20px;
+            color: rgba(233, 30, 99, 0.2);
+            font-size: 24px;
+            animation: floatUp 6s linear infinite;
+            z-index: 0;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) scale(1.5);
+                opacity: 0;
+            }
+        }
+
         .container {
-            background: #ffffff;
+            position: relative;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.95);
             padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(233, 30, 99, 0.15);
             width: 100%;
             max-width: 450px;
             text-align: center;
-            border: 1px solid #f0f0f0;
+            border: 1px solid #f8bbd0;
         }
         .hidden { display: none; }
         input, select, textarea {
@@ -36,6 +62,7 @@
             box-sizing: border-box;
             text-align: right;
             font-family: Tahoma, sans-serif;
+            background: #fff;
         }
         button {
             background: #e91e63;
@@ -59,11 +86,11 @@
         .countdown-box {
             display: flex;
             justify-content: space-around;
-            background: #fafafa;
+            background: #fff0f3;
             padding: 15px;
-            border-radius: 10px;
+            border-radius: 12px;
             margin: 15px 0;
-            border: 1px solid #eee;
+            border: 1px solid #ffccd5;
         }
         .time-item {
             font-size: 13px;
@@ -89,6 +116,22 @@
     </style>
 </head>
 <body>
+
+    <!-- دڵەکان کە بە شێوەی خۆکارانە بەرەو سەرەوە دەچن -->
+    <script>
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart-bg');
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = (Math.random() * 3 + 3) + 's';
+            document.body.appendChild(heart);
+            setTimeout(() => {
+                heart.remove();
+            }, 6000);
+        }
+        setInterval(createHeart, 400);
+    </script>
 
     <!-- ١. پەڕەی چوونەژوورەوە -->
     <div class="container" id="login-section">
@@ -117,7 +160,7 @@
 
     <!-- ٣. داشبۆردی سەرەکی -->
     <div class="container hidden" id="main-dashboard">
-        <h2 id="couple-names-title">🤍 خۆشەویستی 🤍</h2>
+        <h2 id="couple-names-title" style="color: #e91e63;">🤍 خۆشەویستی 🤍</h2>
         
         <div class="countdown-box">
             <div class="time-item"><span id="days">0</span>ڕۆژ</div>
@@ -185,7 +228,6 @@
                 return;
             }
 
-            // دانانی ناوی هەردوو کەسەکە لەونیشانەی سەرەکیدا
             document.getElementById('couple-names-title').innerText = `🤍 ${user} & ${sender} 🤍`;
 
             document.getElementById('login-section').classList.add('hidden');
